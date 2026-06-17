@@ -36,7 +36,7 @@ public class FootballSyncScheduler {
             "PL", "PD", "BL1", "SA", "FL1", "CL", "BSA"
     );
 
-    @Scheduled(cron = "0 */5 * * * *", zone = "UTC")
+    @Scheduled(cron = "0 0 6 * * *", zone = "UTC")
     @Transactional
     public void fixtureSyncJob() {
         log.info("[FixtureSyncJob] Iniciando sincronizacion semanal de fixture...");
