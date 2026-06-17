@@ -4,6 +4,7 @@ import com.utn.prode.entity.EstadoPartido;
 import com.utn.prode.entity.Pronostico;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,10 +23,13 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, UUID> {
                      JOIN FETCH pr.partido p
                      JOIN FETCH p.equipoLocal
                      JOIN FETCH p.equipoVisitante
-                     WHERE pr.usuario.id = :usuarioId p.estado = :estadoPartido
+                     WHERE pr.usuario.id = :usuarioId
+                     AND p.estado = :estadoPartido
                      ORDER BY p.inicioUtc ASC
                      """)
-       List<Pronostico> findByUsuarioIdAndEstadoPartido(UUID usuarioId, EstadoPartido estadoPartido);
+       List<Pronostico> findByUsuarioIdAndEstadoPartido(
+                     @Param("usuarioId") UUID usuarioId,
+                     @Param("estadoPartido") EstadoPartido estadoPartido);
 
        // RF5.2: todos los pronósticos del usuario
        @Query("""
@@ -36,15 +40,18 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, UUID> {
                      WHERE pr.usuario.id = :usuarioId
                      ORDER BY p.inicioUtc ASC
                      """)
-       List<Pronostico> findByUsuarioId(UUID usuarioId);
+       List<Pronostico> findByUsuarioId(@Param("usuarioId") UUID usuarioId);
 
        // RF5.3: pronósticos de terceros (solo si el partido ya está bloqueado)
        @Query("""
                      SELECT pr FROM Pronostico pr
                      JOIN FETCH pr.usuario u
-                     WHERE pr.partido.id = :partidoId AND pr.usuario.id <> :usuarioSolicitanteId
+                     WHERE pr.partido.id = :partidoId
+                     AND pr.usuario.id <> :usuarioSolicitanteId
                      """)
-       List<Pronostico> findByPartidoIdExcluyendoUsuario(UUID partidoId, UUID usuarioSolicitanteId);
+       List<Pronostico> findByPartidoIdExcluyendoUsuario(
+                     @Param("partidoId") UUID partidoId,
+                     @Param("usuarioSolicitanteId") UUID usuarioSolicitanteId);
 
        // RF6.3: todos los pronósticos de un partido para el motor de puntuación
        List<Pronostico> findByPartidoId(UUID partidoId);
@@ -78,7 +85,9 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, UUID> {
                          WHERE gm.grupo.id = :grupoId
                      )
                      GROUP BY pr.usuario.id, pr.usuario.username
-                     ORDER BY totalPuntos DESC, totalPlenos DESC, primerPronostico ASC
+                     ORDER BY totalPuntos DESC,
+                              totalPlenos DESC,
+                              primerPronostico ASC
                      """)
-       List<Object[]> findRankingByGrupo(UUID grupoId);
+       List<Object[]> findRankingByGrupo(@Param("grupoId") UUID grupoId);
 }

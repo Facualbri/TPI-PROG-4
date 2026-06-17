@@ -1,4 +1,4 @@
-package com.utn.prode.service;
+package com.utn.prode.service.interfaces;
 
 import com.utn.prode.dto.request.LoginRequestDTO;
 import com.utn.prode.dto.request.RegisterRequestDTO;

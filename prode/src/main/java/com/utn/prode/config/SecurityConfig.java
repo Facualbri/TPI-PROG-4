@@ -74,8 +74,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/partidos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/partidos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/partidos/**").hasRole("ADMIN")
-                        .requestMatchers("/api/partidos/*/resultado").hasRole("ADMIN")
-                        .requestMatchers("/api/partidos/*/estado").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/partidos/**").hasRole("ADMIN")
 
                         // USUARIO AUTENTICADO: pronósticos, ranking y grupos
                         .requestMatchers("/api/pronosticos/**").authenticated()
@@ -118,7 +117,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

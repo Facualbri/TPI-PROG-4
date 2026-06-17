@@ -22,12 +22,13 @@ public interface FechaRepository extends JpaRepository<Fecha, UUID> {
     Optional<Fecha> findByNombre(String nombre);
 
     /**
-     * RF3.2: una Fecha solo se puede eliminar si está PROGRAMADA y no tiene partidos.
+     * RF3.2: una Fecha solo se puede eliminar si está PROGRAMADA y no tiene
+     * partidos.
      */
     @Query("""
-        SELECT COUNT(p) > 0
-        FROM Partido p
-        WHERE p.fecha.id = :fechaId
-        """)
+            SELECT COUNT(p) > 0
+            FROM Partido p
+            WHERE p.fecha.id = :fechaId
+            """)
     boolean tienePartidos(UUID fechaId);
 }
