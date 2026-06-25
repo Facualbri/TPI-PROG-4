@@ -15,4 +15,6 @@ public interface PronosticoService {
     List<PronosticoResponseDTO> listarPropiosPorEstado(UUID usuarioId, EstadoPartido estado);
 
     List<PronosticoResponseDTO> listarDeTerceros(UUID usuarioSolicitanteId, UUID partidoId);
+
+    List<PronosticoResponseDTO> recientesAcertados();
 }

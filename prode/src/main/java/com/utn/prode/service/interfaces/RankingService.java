@@ -9,4 +9,6 @@ public interface RankingService {
     List<RankingResponseDTO> rankingGlobal();
 
     List<RankingResponseDTO> rankingGrupo(UUID grupoId);
+
+    Long obtenerPozo();
 }

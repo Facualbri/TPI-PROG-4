@@ -23,6 +23,13 @@ public class RankingController {
         return ResponseEntity.ok(rankingService.rankingGlobal());
     }
 
+    // GET /api/ranking/pozo
+    // Dashboard: suma total de puntos de todos los usuarios
+    @GetMapping("/pozo")
+    public ResponseEntity<Long> pozo() {
+        return ResponseEntity.ok(rankingService.obtenerPozo());
+    }
+
     // GET /api/ranking/grupo/{grupoId}
     // RF8.4: ranking exclusivo de los miembros de un grupo privado
     @GetMapping("/grupo/{grupoId}")

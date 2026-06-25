@@ -12,5 +12,8 @@ public interface PronosticoMapper {
     @Mapping(target = "equipoVisitante", source = "partido.equipoVisitante")
     @Mapping(target = "inicioUtc", source = "partido.inicioUtc")
     @Mapping(target = "estadoPartido", expression = "java(pronostico.getPartido().getEstado().name())")
+    @Mapping(target = "golesLocal", source = "partido.golesLocal")
+    @Mapping(target = "golesVisitante", source = "partido.golesVisitante")
+    @Mapping(target = "username", source = "usuario.username")
     PronosticoResponseDTO toResponse(Pronostico pronostico);
 }

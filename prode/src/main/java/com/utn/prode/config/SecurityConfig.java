@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.List;
 
 /**
@@ -34,6 +36,9 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+
+    @Value("${app.cors.allowed-origins:*}")
+    private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,7 +60,7 @@ public class SecurityConfig {
                         // PÚBLICO: registro e inicio de sesión (no necesitan token)
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // PÚBLICO: ver partidos y fechas (cualquiera puede verlos)
+                        // AUTENTICADO: ver partidos, fechas y equipos (requieren token JWT)
                         .requestMatchers(HttpMethod.GET, "/api/fechas/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/partidos/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/equipos/**").authenticated()
@@ -80,6 +85,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/pronosticos/**").authenticated()
                         .requestMatchers("/api/ranking/**").authenticated()
                         .requestMatchers("/api/grupos/**").authenticated()
+
+                        // ARCHIVOS ESTÁTICOS: públicos (sin token)
+                        .requestMatchers("/", "/index.html", "/favicon.ico").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
 
                         // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated())
@@ -116,7 +125,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOriginPatterns(List.of(allowedOrigins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

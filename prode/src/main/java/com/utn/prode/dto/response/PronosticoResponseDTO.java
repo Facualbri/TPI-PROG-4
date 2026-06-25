@@ -22,5 +22,9 @@ public class PronosticoResponseDTO {
     private Integer golesLocalPred;
     private Integer golesVisitantePred;
     private Integer puntos;
+    private Integer golesLocal;
+    private Integer golesVisitante;
+    private String username;
     private Instant createdAt;
+    private Instant updatedAt;
 }

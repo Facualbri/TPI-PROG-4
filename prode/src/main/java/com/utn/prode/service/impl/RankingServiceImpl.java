@@ -30,6 +30,12 @@ public class RankingServiceImpl implements RankingService {
 
     @Override
     @Transactional(readOnly = true)
+    public Long obtenerPozo() {
+        return pronosticoRepository.findPozoTotal();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<RankingResponseDTO> rankingGrupo(UUID grupoId) {
         // Verificar que el grupo existe
         if (!grupoPrivadoRepository.existsById(grupoId)) {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface PronosticoRepository extends JpaRepository<Pronostico, UUID> {
@@ -54,7 +55,22 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, UUID> {
                      @Param("usuarioSolicitanteId") UUID usuarioSolicitanteId);
 
        // RF6.3: todos los pronósticos de un partido para el motor de puntuación
-       List<Pronostico> findByPartidoId(UUID partidoId);
+        List<Pronostico> findByPartidoId(UUID partidoId);
+
+        // Dashboard: últimos 10 pronósticos con puntos (más recientes primero)
+        @Query("""
+                      SELECT pr FROM Pronostico pr
+                      JOIN FETCH pr.partido p
+                      JOIN FETCH p.equipoLocal
+                      JOIN FETCH p.equipoVisitante
+                      WHERE pr.puntos > 0
+                      ORDER BY pr.updatedAt DESC
+                      """)
+        List<Pronostico> findRecientesAcertados(Pageable pageable);
+
+        // Dashboard: pozo total de puntos de todos los usuarios
+        @Query("SELECT COALESCE(SUM(pr.puntos), 0) FROM Pronostico pr")
+        Long findPozoTotal();
 
        // RF7.1 y RF7.2: ranking global con desempates
        @Query("""

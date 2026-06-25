@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +76,15 @@ public class PronosticoServiceImpl implements PronosticoService {
     @Transactional(readOnly = true)
     public List<PronosticoResponseDTO> listarPropiosPorEstado(UUID usuarioId, EstadoPartido estado) {
         return pronosticoRepository.findByUsuarioIdAndEstadoPartido(usuarioId, estado)
+                .stream()
+                .map(pronosticoMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PronosticoResponseDTO> recientesAcertados() {
+        return pronosticoRepository.findRecientesAcertados(PageRequest.of(0, 10))
                 .stream()
                 .map(pronosticoMapper::toResponse)
                 .toList();

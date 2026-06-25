@@ -48,6 +48,13 @@ public class PronosticoController {
         return ResponseEntity.ok(pronosticoService.listarPropiosPorEstado(usuarioId, estado));
     }
 
+    // GET /api/pronosticos/recientes-acertados
+    // Dashboard: últimos 10 pronósticos con puntos
+    @GetMapping("/recientes-acertados")
+    public ResponseEntity<List<PronosticoResponseDTO>> recientesAcertados() {
+        return ResponseEntity.ok(pronosticoService.recientesAcertados());
+    }
+
     // GET /api/pronosticos/partido/{partidoId}
     // RF5.3: pronósticos de terceros — solo si ya venció el margen de bloqueo
     @GetMapping("/partido/{partidoId}")
