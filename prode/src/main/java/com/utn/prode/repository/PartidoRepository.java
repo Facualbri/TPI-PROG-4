@@ -19,6 +19,8 @@ public interface PartidoRepository extends JpaRepository<Partido, UUID> {
 
         List<Partido> findByEstado(EstadoPartido estado);
 
+        List<Partido> findByEstadoOrderByInicioUtcAsc(EstadoPartido estado);
+
         Optional<Partido> findByApiExternalId(String apiExternalId);
 
         boolean existsByApiExternalId(String apiExternalId);

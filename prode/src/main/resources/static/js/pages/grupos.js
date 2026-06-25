@@ -56,7 +56,7 @@ const GruposPage = {
         const grupo = await Api.post('/grupos', { nombre });
         Toast.success('Grupo creado');
         document.getElementById('grupo-nombre').value = '';
-        Router.navigate('/grupos');
+        Router.navigate('/grupos', true);
       } catch (err) {
         Toast.error(err.message);
       } finally {
@@ -73,7 +73,7 @@ const GruposPage = {
         await Api.post('/grupos/unirse', { codigoInvitacion: codigo });
         Toast.success('Te uniste al grupo');
         document.getElementById('codigo-invitacion').value = '';
-        Router.navigate('/grupos');
+        Router.navigate('/grupos', true);
       } catch (err) {
         Toast.error(err.message);
       } finally {
@@ -91,13 +91,14 @@ const GruposPage = {
         </div>
         <div class="card-body">
           <p class="text-muted mb-md">Creado por ${Helpers.escapeHtml(g.creadorUsername)}</p>
-          <div>
+          <div class="mb-md">
             <label class="form-label">Código de invitación</label>
             <div class="grupo-code">
               <span>${Helpers.escapeHtml(g.codigoInvitacion)}</span>
               <button class="btn btn-sm btn-secondary" onclick="GruposPage._copiarCodigo('${Helpers.escapeHtml(g.codigoInvitacion)}')">Copiar</button>
             </div>
           </div>
+          <button class="btn btn-sm btn-danger" onclick="GruposPage._salirGrupo('${g.id}', '${Helpers.escapeHtml(g.nombre)}')">Salir del grupo</button>
         </div>
       </div>
     `;
@@ -108,6 +109,23 @@ const GruposPage = {
       Toast.success('Código copiado');
     }).catch(() => {
       Toast.error('No se pudo copiar');
+    });
+  },
+
+  _salirGrupo(grupoId, nombre) {
+    Modal.show({
+      title: 'Salir del grupo',
+      body: `<p>¿Estás seguro de que querés salir de <strong>${Helpers.escapeHtml(nombre)}</strong>?</p><p class="text-muted mt-sm" style="font-size:0.85rem">Si sos el único miembro, el grupo se eliminará.</p>`,
+      confirmText: 'Salir',
+      onConfirm: async () => {
+        try {
+          await Api.post(`/grupos/${grupoId}/salir`);
+          Toast.success('Saliste del grupo');
+          Router.navigate('/grupos', true);
+        } catch (err) {
+          Toast.error(err.message);
+        }
+      },
     });
   },
 };

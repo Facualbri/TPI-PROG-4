@@ -42,7 +42,7 @@ const PartidosPage = {
       <div id="partidos-list">
         ${partidos.length === 0
           ? '<div class="empty-state"><p>No hay partidos en esta fecha</p></div>'
-          : partidos.map(p => PartidosPage._renderPartido(p)).join('')
+          : partidos.map((p, i) => PartidosPage._renderPartido(p, i)).join('')
         }
       </div>
     `;
@@ -56,16 +56,20 @@ const PartidosPage = {
     this._bindPredictionForms();
   },
 
-  _renderPartido(p) {
+  _renderPartido(p, index) {
+    const delay = index * 60;
     return `
-      <div class="match-card mb-md" id="partido-${p.id}">
+      <div class="match-card mb-md" id="partido-${p.id}" style="animation-delay:${delay}ms">
         <div class="match-card-header">
           <span class="badge ${Helpers.estadoClass(p.estado)}">${Helpers.estadoLabel(p.estado)}</span>
           <span class="text-muted" style="font-size:0.8rem">${Helpers.formatDateShort(p.inicioUtc)}</span>
         </div>
         <div class="match-card-body">
           <div class="match-team">
-            <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>
+            ${p.equipoLocal?.escudoUrl
+              ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoLocal.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoLocal.nombre || '')}" loading="lazy">`
+              : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>`
+            }
             <span class="match-team-name">${Helpers.escapeHtml(p.equipoLocal?.nombre || '')}</span>
           </div>
           <div>
@@ -81,7 +85,10 @@ const PartidosPage = {
           </div>
           <div class="match-team match-team-right">
             <span class="match-team-name">${Helpers.escapeHtml(p.equipoVisitante?.nombre || '')}</span>
-            <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>
+            ${p.equipoVisitante?.escudoUrl
+              ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoVisitante.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoVisitante.nombre || '')}" loading="lazy">`
+              : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>`
+            }
           </div>
         </div>
         ${p.estado === 'POR_JUGARSE' && !p.bloqueado ? `
@@ -134,6 +141,8 @@ const PartidosPage = {
         golesVisitantePred: parseInt(visitante),
       });
       Toast.success('Pronóstico guardado');
+      card.querySelectorAll('input').forEach(i => i.disabled = true);
+      card.querySelector('.btn').disabled = true;
     } catch (err) {
       Toast.error(err.message);
     }

@@ -15,4 +15,6 @@ public interface GrupoPrivadoService {
     List<GrupoPrivadoResponseDTO> listarMisGrupos(UUID usuarioId);
 
     GrupoPrivadoResponseDTO buscarPorId(UUID id);
+
+    void salir(UUID usuarioId, UUID grupoId);
 }

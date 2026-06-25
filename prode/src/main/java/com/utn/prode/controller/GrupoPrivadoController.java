@@ -55,4 +55,12 @@ public class GrupoPrivadoController {
     public ResponseEntity<GrupoPrivadoResponseDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(grupoService.buscarPorId(id));
     }
+
+    // POST /api/grupos/{id}/salir
+    @PostMapping("/{id}/salir")
+    public ResponseEntity<Void> salir(@PathVariable UUID id) {
+        UUID usuarioId = usuarioContextService.getUsuarioAutenticado().getId();
+        grupoService.salir(usuarioId, id);
+        return ResponseEntity.ok().build();
+    }
 }

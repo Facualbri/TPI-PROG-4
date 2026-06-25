@@ -101,6 +101,21 @@ public class GrupoPrivadoServiceImpl implements GrupoPrivadoService {
                         .orElseThrow(() -> new NoSuchElementException("Grupo no encontrado con id: " + id)));
     }
 
+    @Override
+    @Transactional
+    public void salir(UUID usuarioId, UUID grupoId) {
+        if (!grupoMiembroRepository.existsById(new GrupoMiembro.GrupoMiembroId(grupoId, usuarioId))) {
+            throw new IllegalArgumentException("No sos miembro de este grupo");
+        }
+
+        grupoMiembroRepository.deleteByGrupoAndUsuario(grupoId, usuarioId);
+        grupoMiembroRepository.flush();
+
+        if (grupoMiembroRepository.countByGrupoId(grupoId) == 0) {
+            grupoRepository.deleteById(grupoId);
+        }
+    }
+
     /**
      * RF8.2: genera un código alfanumérico único de 8 caracteres en mayúsculas.
      * Ejemplo: "X7K2MNP9"

@@ -174,6 +174,16 @@ public class PartidoServiceImpl implements PartidoService {
         return partidoMapper.toResponse(partido);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<PartidoResponseDTO> listarProximos(int limite) {
+        return partidoRepository.findByEstadoOrderByInicioUtcAsc(EstadoPartido.POR_JUGARSE)
+                .stream()
+                .limit(limite)
+                .map(partidoMapper::toResponse)
+                .toList();
+    }
+
     private Partido buscarEntidad(UUID id) {
         return partidoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Partido no encontrado con id: " + id));

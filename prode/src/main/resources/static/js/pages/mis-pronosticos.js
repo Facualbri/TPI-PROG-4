@@ -49,27 +49,33 @@ const MisPronosticosPage = {
         return;
       }
 
-      container.innerHTML = pronosticos.map(p => `
-        <div class="match-card mb-md">
+      container.innerHTML = pronosticos.map((p, i) => `
+        <div class="match-card mb-md" style="animation-delay:${i * 50}ms">
           <div class="match-card-header">
             <span class="badge ${Helpers.estadoClass(p.estadoPartido)}">${Helpers.estadoLabel(p.estadoPartido)}</span>
             <span class="text-muted" style="font-size:0.8rem">${Helpers.formatDateShort(p.inicioUtc)}</span>
           </div>
           <div class="match-card-body">
             <div class="match-team">
-              <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>
+              ${p.equipoLocal?.escudoUrl
+                ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoLocal.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoLocal.nombre || '')}" loading="lazy">`
+                : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>`
+              }
               <span class="match-team-name">${Helpers.escapeHtml(p.equipoLocal?.nombre || '')}</span>
             </div>
             <div>
               <div class="match-score">${p.golesLocalPred} - ${p.golesVisitantePred}</div>
-              ${p.puntos > 0 ? `<div class="text-success text-center font-bold" style="font-size:0.85rem">+${p.puntos} pts</div>` : ''}
+              ${p.puntos > 0 ? `<div class="text-success font-bold" style="font-size:0.9rem;text-align:center">+${p.puntos} pts</div>` : ''}
               ${p.estadoPartido === 'FINALIZADO' && p.golesLocal != null ? `
                 <div class="text-muted text-center" style="font-size:0.8rem">Resultado: ${p.golesLocal} - ${p.golesVisitante}</div>
               ` : ''}
             </div>
             <div class="match-team match-team-right">
               <span class="match-team-name">${Helpers.escapeHtml(p.equipoVisitante?.nombre || '')}</span>
-              <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>
+              ${p.equipoVisitante?.escudoUrl
+                ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoVisitante.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoVisitante.nombre || '')}" loading="lazy">`
+                : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>`
+              }
             </div>
           </div>
         </div>

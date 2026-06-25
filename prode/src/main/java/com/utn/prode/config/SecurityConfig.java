@@ -57,8 +57,9 @@ public class SecurityConfig {
                 // -------------------------------------------------------
                 .authorizeHttpRequests(auth -> auth
 
-                        // PÚBLICO: registro e inicio de sesión (no necesitan token)
+                        // PÚBLICO: registro, inicio de sesión y próximos partidos
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/partidos/proximos").permitAll()
 
                         // AUTENTICADO: ver partidos, fechas y equipos (requieren token JWT)
                         .requestMatchers(HttpMethod.GET, "/api/fechas/**").authenticated()

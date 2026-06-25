@@ -44,6 +44,6 @@ const Auth = {
 
   logout() {
     this.clearSession();
-    Router.navigate('/login');
+    Router.navigate('/');
   },
 };

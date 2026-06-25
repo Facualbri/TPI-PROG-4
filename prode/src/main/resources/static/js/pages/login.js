@@ -1,5 +1,8 @@
 const LoginPage = {
   async render(main) {
+    const params = Router.getQueryParams();
+    const initialTab = params.tab === 'register' ? 'register' : 'login';
+
     main.innerHTML = `
       <div class="login-page">
         <div class="login-card card">
@@ -8,11 +11,11 @@ const LoginPage = {
             <p class="text-muted">Pronosticá los partidos y competí</p>
           </div>
           <div class="login-tabs">
-            <button class="login-tab active" data-tab="login">Iniciar sesión</button>
-            <button class="login-tab" data-tab="register">Registrarse</button>
+            <button class="login-tab ${initialTab === 'login' ? 'active' : ''}" data-tab="login">Iniciar sesión</button>
+            <button class="login-tab ${initialTab === 'register' ? 'active' : ''}" data-tab="register">Registrarse</button>
           </div>
           <div id="login-form-container">
-            ${LoginPage._renderLoginForm()}
+            ${initialTab === 'login' ? LoginPage._renderLoginForm() : LoginPage._renderRegisterForm()}
           </div>
           <div id="login-error" class="alert alert-error" style="display:none"></div>
         </div>

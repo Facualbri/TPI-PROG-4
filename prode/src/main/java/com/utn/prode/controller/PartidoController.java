@@ -27,6 +27,13 @@ public class PartidoController {
         return ResponseEntity.ok(partidoService.listarPorFecha(fechaId));
     }
 
+    // GET /api/partidos/proximos — público, sin auth
+    @GetMapping("/proximos")
+    public ResponseEntity<List<PartidoResponseDTO>> listarProximos(
+            @RequestParam(defaultValue = "6") int limite) {
+        return ResponseEntity.ok(partidoService.listarProximos(limite));
+    }
+
     // GET /api/partidos/{id}
     @GetMapping("/{id}")
     public ResponseEntity<PartidoResponseDTO> buscarPorId(@PathVariable UUID id) {

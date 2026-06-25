@@ -54,6 +54,8 @@ const RankingPage = {
       return `<div class="empty-state"><p>Sin datos de ranking</p></div>`;
     }
 
+    const medals = ['🥇', '🥈', '🥉'];
+
     return `
       <div class="card">
         <div class="card-header">
@@ -72,7 +74,12 @@ const RankingPage = {
           <tbody>
             ${ranking.map((r, i) => `
               <tr>
-                <td><span class="rank-pos ${i < 3 ? `rank-${i + 1}` : ''}">${r.posicion}</span></td>
+                <td>
+                  ${i < 3 && r.posicion <= 3
+                    ? `<span class="rank-medal">${medals[r.posicion - 1]}</span>`
+                    : `<span class="rank-pos">${r.posicion}</span>`
+                  }
+                </td>
                 <td>
                   <div class="flex items-center gap-sm">
                     <div class="avatar avatar-sm">${Helpers.getInitials(r.username)}</div>

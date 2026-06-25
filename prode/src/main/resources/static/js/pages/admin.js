@@ -66,6 +66,7 @@ const AdminPage = {
           <table class="ranking-table">
             <thead>
               <tr>
+                <th></th>
                 <th>Nombre</th>
                 <th>País</th>
                 <th>Acciones</th>
@@ -74,6 +75,12 @@ const AdminPage = {
             <tbody>
               ${equipos.map(e => `
                 <tr>
+                  <td>
+                    ${e.escudoUrl
+                      ? `<img class="team-escudo" src="${Helpers.escapeHtml(e.escudoUrl)}" alt="${Helpers.escapeHtml(e.nombre)}" loading="lazy" style="width:28px;height:28px">`
+                      : `<div class="avatar avatar-sm">${Helpers.getInitials(e.nombre)}</div>`
+                    }
+                  </td>
                   <td class="font-bold">${Helpers.escapeHtml(e.nombre)}</td>
                   <td class="text-muted">${Helpers.escapeHtml(e.pais || '-')}</td>
                   <td>
@@ -234,7 +241,7 @@ const AdminPage = {
         </div>
 
         <div id="admin-partidos-list">
-          ${partidos.map(p => AdminPage._renderPartidoRow(p)).join('')}
+          ${partidos.map((p, i) => AdminPage._renderPartidoRow(p, i)).join('')}
         </div>
       </div>
     `;
@@ -243,13 +250,14 @@ const AdminPage = {
       const lista = document.getElementById('admin-partidos-list');
       lista.innerHTML = '<div class="loading-container"><div class="spinner"></div></div>';
       const nuevos = await Api.get(`/partidos?fechaId=${e.target.value}`);
-      lista.innerHTML = nuevos.map(p => AdminPage._renderPartidoRow(p)).join('');
+      lista.innerHTML = nuevos.map((p, i) => AdminPage._renderPartidoRow(p, i)).join('');
     });
   },
 
-  _renderPartidoRow(p) {
+  _renderPartidoRow(p, index) {
+    const delay = (index || 0) * 50;
     return `
-      <div class="match-card mb-md">
+      <div class="match-card mb-md" style="animation-delay:${delay}ms">
         <div class="match-card-header">
           <span class="badge ${Helpers.estadoClass(p.estado)}">${Helpers.estadoLabel(p.estado)}</span>
           <div class="flex gap-sm">
@@ -264,7 +272,10 @@ const AdminPage = {
         </div>
         <div class="match-card-body">
           <div class="match-team">
-            <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>
+            ${p.equipoLocal?.escudoUrl
+              ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoLocal.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoLocal.nombre || '')}" loading="lazy">`
+              : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoLocal?.nombre)}</div>`
+            }
             <span class="match-team-name">${Helpers.escapeHtml(p.equipoLocal?.nombre || '')}</span>
           </div>
           <div>
@@ -276,7 +287,10 @@ const AdminPage = {
           </div>
           <div class="match-team match-team-right">
             <span class="match-team-name">${Helpers.escapeHtml(p.equipoVisitante?.nombre || '')}</span>
-            <div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>
+            ${p.equipoVisitante?.escudoUrl
+              ? `<img class="team-escudo" src="${Helpers.escapeHtml(p.equipoVisitante.escudoUrl)}" alt="${Helpers.escapeHtml(p.equipoVisitante.nombre || '')}" loading="lazy">`
+              : `<div class="avatar avatar-sm">${Helpers.getInitials(p.equipoVisitante?.nombre)}</div>`
+            }
           </div>
         </div>
       </div>
