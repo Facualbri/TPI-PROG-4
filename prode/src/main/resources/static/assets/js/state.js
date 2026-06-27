@@ -16,6 +16,7 @@ const State = {
     user: null,
     fechas: [],
     equipos: [],
+    theme: 'dark',
   },
 
   setUser(user) {
@@ -30,6 +31,13 @@ const State = {
 
   setEquipos(equipos) {
     this.data.equipos = equipos;
+    this._notify();
+  },
+
+  setTheme(theme) {
+    this.data.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('prode_theme', theme);
     this._notify();
   },
 };

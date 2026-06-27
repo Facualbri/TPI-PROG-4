@@ -1,45 +1,58 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prode</title>
+  <meta name="description" content="Prode de fútbol - Pronosticá resultados, competí con amigos y ganá el campeonato.">
+  <meta name="keywords" content="prode, fútbol, predicciones, quiniela, apuestas deportivas">
+  <meta property="og:title" content="Prode - Pronosticá y Ganá">
+  <meta property="og:description" content="Predecí resultados, competí con tus amigos y convertite en el campeón del Prode.">
+  <meta property="og:type" content="website">
+  <title>Prode - Pronosticá y Ganá</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-  <div id="app" class="layout">
-    <aside id="navbar" class="sidebar"></aside>
-    <div class="layout-overlay" id="sidebar-overlay"></div>
-    <main id="main-content" class="layout-main"></main>
-  </div>
-
-  <div id="toast-container"></div>
+  <div id="app"></div>
   <div id="modal-container"></div>
+  <div id="toast-container"></div>
 
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/helpers.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/components/navbar.js"></script>
-  <script src="js/components/card.js"></script>
-  <script src="js/components/modal.js"></script>
-  <script src="js/components/toast.js"></script>
-  <script src="js/components/table.js"></script>
-  <script src="js/pages/landing.js"></script>
-  <script src="js/pages/login.js"></script>
-  <script src="js/pages/dashboard.js"></script>
-  <script src="js/pages/partidos.js"></script>
-  <script src="js/pages/mis-pronosticos.js"></script>
-  <script src="js/pages/ranking.js"></script>
-  <script src="js/pages/grupos.js"></script>
-  <script src="js/pages/admin.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script src="assets/js/helpers.js"></script>
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/router.js"></script>
+
+  <script src="assets/js/components/toast.js"></script>
+  <script src="assets/js/components/navbar.js"></script>
+  <script src="assets/js/components/skeleton.js"></script>
+  <script src="assets/js/components/chart.js"></script>
+
+  <script src="assets/js/pages/landing.js"></script>
+  <script src="assets/js/pages/login.js"></script>
+  <script src="assets/js/pages/dashboard.js"></script>
+  <script src="assets/js/pages/partidos.js"></script>
+  <script src="assets/js/pages/mis-pronosticos.js"></script>
+  <script src="assets/js/pages/historial.js"></script>
+  <script src="assets/js/pages/ranking.js"></script>
+  <script src="assets/js/pages/estadisticas.js"></script>
+  <script src="assets/js/pages/perfil.js"></script>
+  <script src="assets/js/pages/configuracion.js"></script>
+  <script src="assets/js/pages/grupos.js"></script>
+  <script src="assets/js/pages/admin.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const theme = localStorage.getItem('prode_theme');
+      if (theme) document.documentElement.setAttribute('data-theme', theme);
       App.init();
     });
   </script>

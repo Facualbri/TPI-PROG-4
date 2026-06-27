@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -67,7 +68,12 @@ public class PartidoController {
         return ResponseEntity.ok(partidoService.pasarAEnJuego(id));
     }
 
-    // PATCH /api/partidos/{id}/resultado — solo ADMIN — RF6.1
+    // POST /api/partidos/transicionar — solo ADMIN — fuerza transición de pendientes a EN_JUEGO
+    @PostMapping("/transicionar")
+    public ResponseEntity<Map<String, Integer>> transicionar() {
+        int actualizados = partidoService.transicionarPendientes();
+        return ResponseEntity.ok(Map.of("actualizados", actualizados));
+    }
     @PatchMapping("/{id}/resultado")
     public ResponseEntity<PartidoResponseDTO> registrarResultado(
             @PathVariable UUID id,

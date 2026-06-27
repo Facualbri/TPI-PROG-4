@@ -1,5 +1,6 @@
 const Router = {
   _routes: {},
+  _prevHandler: null,
   _currentRoute: null,
 
   route(path, handler) {
@@ -26,12 +27,13 @@ const Router = {
   async handleRoute() {
     const path = this.getCurrentPath();
     if (path === this._currentRoute) return;
-    if (this._currentRoute) {
-      LandingPage.cleanup?.();
-    }
-    this._currentRoute = path;
 
-    const main = document.getElementById('main-content');
+    if (this._prevHandler && typeof this._prevHandler.cleanup === 'function') {
+      this._prevHandler.cleanup();
+    }
+
+    this._currentRoute = path;
+    const app = document.getElementById('app');
 
     if (!Auth.isAuthenticated() && path !== '/login' && path !== '/') {
       this.navigate('/');
@@ -54,23 +56,10 @@ const Router = {
       return;
     }
 
-    main.innerHTML = '<div class="loading-container"><div class="spinner spinner-lg"></div></div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    try {
-      await handler(main);
-      main.style.animation = 'none';
-      requestAnimationFrame(() => {
-        main.style.animation = 'fadeInUp 0.35s ease';
-      });
-      Navbar.render();
-    } catch (err) {
-      main.innerHTML = `
-        <div class="page-section">
-          <div class="alert alert-error">${Helpers.escapeHtml(err.message)}</div>
-          <button class="btn btn-secondary" onclick="Router.handleRoute()">Reintentar</button>
-        </div>
-      `;
-    }
+    this._prevHandler = handler;
+    await handler(app);
   },
 
   init() {
@@ -79,18 +68,21 @@ const Router = {
   },
 };
 
-Router.route('/', (main) => LandingPage.render(main));
-Router.route('/login', (main) => LoginPage.render(main));
-Router.route('/dashboard', (main) => DashboardPage.render(main));
-Router.route('/partidos', (main) => PartidosPage.render(main));
-Router.route('/mis-pronosticos', (main) => MisPronosticosPage.render(main));
-Router.route('/ranking', (main) => RankingPage.render(main));
-Router.route('/grupos', (main) => GruposPage.render(main));
-Router.route('/admin', (main) => AdminPage.render(main));
-
 const App = {
   init() {
-    Navbar.render();
     Router.init();
   },
 };
+
+Router.route('/', (app) => LandingPage.render(app));
+Router.route('/login', (app) => LoginPage.render(app));
+Router.route('/dashboard', (app) => DashboardPage.render(app));
+Router.route('/partidos', (app) => PartidosPage.render(app));
+Router.route('/mis-pronosticos', (app) => MisPronosticosPage.render(app));
+Router.route('/historial', (app) => HistorialPage.render(app));
+Router.route('/ranking', (app) => RankingPage.render(app));
+Router.route('/estadisticas', (app) => EstadisticasPage.render(app));
+Router.route('/perfil', (app) => PerfilPage.render(app));
+Router.route('/configuracion', (app) => ConfiguracionPage.render(app));
+Router.route('/grupos', (app) => GruposPage.render(app));
+Router.route('/admin', (app) => AdminPage.render(app));

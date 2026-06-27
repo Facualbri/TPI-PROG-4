@@ -57,14 +57,16 @@ public class SecurityConfig {
                 // -------------------------------------------------------
                 .authorizeHttpRequests(auth -> auth
 
-                        // PÚBLICO: registro, inicio de sesión y próximos partidos
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // PÚBLICO: registro e inicio de sesión
+                        .requestMatchers("/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/partidos/proximos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/equipos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ranking/global").permitAll()
 
-                        // AUTENTICADO: ver partidos, fechas y equipos (requieren token JWT)
+                        // AUTENTICADO: ver partidos y fechas (requieren token JWT)
                         .requestMatchers(HttpMethod.GET, "/api/fechas/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/partidos/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/equipos/**").authenticated()
 
                         // SOLO ADMIN: crear, modificar y eliminar equipos
                         .requestMatchers(HttpMethod.POST, "/api/equipos/**").hasRole("ADMIN")

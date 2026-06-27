@@ -67,7 +67,7 @@ public class FootballSyncScheduler {
         }
     }
 
-    @Scheduled(cron = "0 */15 * * * *", zone = "UTC")
+    @Scheduled(cron = "0 * * * * *", zone = "UTC")
     @Transactional
     public void autoTransitionJob() {
         log.info("[AutoTransitionJob] Buscando partidos que deben pasar a EN_JUEGO...");

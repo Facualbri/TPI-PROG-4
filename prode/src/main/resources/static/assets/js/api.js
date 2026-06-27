@@ -8,11 +8,27 @@ async function apiRequest(method, path, body = null) {
   const opts = { method, headers };
   if (body !== null) opts.body = JSON.stringify(body);
 
-  const res = await fetch(`${API_BASE}${path}`, opts);
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, opts);
+  } catch (netErr) {
+    throw new Error('Error de conexión con el servidor');
+  }
+
+  if (res.status === 401 && token) {
+    Auth.clearSession();
+    window.location.hash = '/login';
+    throw new Error('Sesión expirada. Iniciá sesión nuevamente.');
+  }
 
   if (res.status === 204) return null;
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Error ${res.status} - Respuesta inválida del servidor`);
+  }
 
   if (!res.ok) {
     const msg = data.message || data.error || `Error ${res.status}`;

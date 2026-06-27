@@ -23,10 +23,7 @@ const Toast = {
     `;
 
     container.appendChild(el);
-
-    requestAnimationFrame(() => {
-      el.classList.add('toast-visible');
-    });
+    requestAnimationFrame(() => el.classList.add('toast-visible'));
 
     if (duration > 0) {
       setTimeout(() => this.close(id), duration);
@@ -42,7 +39,7 @@ const Toast = {
   },
 
   success(msg) { this.show(msg, 'success'); },
-  error(msg) { this.show(msg, 'error'); },
+  error(msg) { this.show(msg, 'error', 5000); },
   info(msg) { this.show(msg, 'info'); },
   warning(msg) { this.show(msg, 'warning'); },
 };
@@ -58,7 +55,8 @@ toastStyle.textContent = `
     flex-direction: column;
     gap: 10px;
     pointer-events: none;
-    max-width: 420px;
+    max-width: 400px;
+    width: 100%;
   }
 
   .toast {
@@ -70,7 +68,7 @@ toastStyle.textContent = `
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-lg);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     transform: translateX(120%);
     opacity: 0;
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
@@ -89,18 +87,13 @@ toastStyle.textContent = `
 
   .toast-success { border-left: 4px solid var(--color-success); }
   .toast-error { border-left: 4px solid var(--color-danger); }
-  .toast-info { border-left: 4px solid var(--color-info); }
+  .toast-info { border-left: 4px solid var(--color-accent); }
   .toast-warning { border-left: 4px solid var(--color-warning); }
 
-  .toast-icon {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
+  .toast-icon { display: flex; align-items: center; flex-shrink: 0; }
   .toast-success .toast-icon { color: var(--color-success); }
   .toast-error .toast-icon { color: var(--color-danger); }
-  .toast-info .toast-icon { color: var(--color-info); }
+  .toast-info .toast-icon { color: var(--color-accent); }
   .toast-warning .toast-icon { color: var(--color-warning); }
 
   .toast-message { flex: 1; font-weight: 500; }
@@ -112,9 +105,15 @@ toastStyle.textContent = `
     flex-shrink: 0;
     margin-left: var(--space-sm);
   }
+  .toast-close:hover { color: var(--color-text); }
 
-  .toast-close:hover {
-    color: var(--color-text);
+  @media (max-width: 480px) {
+    #toast-container {
+      left: 10px;
+      right: 10px;
+      top: 10px;
+      max-width: none;
+    }
   }
 `;
 document.head.appendChild(toastStyle);

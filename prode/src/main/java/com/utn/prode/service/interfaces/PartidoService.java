@@ -23,4 +23,6 @@ public interface PartidoService {
     PartidoResponseDTO registrarResultado(UUID id, ResultadoRequestDTO dto);
 
     List<PartidoResponseDTO> listarProximos(int limite);
+
+    int transicionarPendientes();
 }

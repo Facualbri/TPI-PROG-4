@@ -184,6 +184,24 @@ public class PartidoServiceImpl implements PartidoService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public int transicionarPendientes() {
+        Instant ahora = Instant.now();
+        List<Partido> pendientes = partidoRepository.findByEstadoAndInicioUtcBefore(
+                EstadoPartido.POR_JUGARSE, ahora);
+
+        for (Partido partido : pendientes) {
+            partido.setEstado(EstadoPartido.EN_JUEGO);
+            partidoRepository.save(partido);
+            Fecha fecha = partido.getFecha();
+            fecha.recalcularEstado();
+            fechaRepository.save(fecha);
+        }
+
+        return pendientes.size();
+    }
+
     private Partido buscarEntidad(UUID id) {
         return partidoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Partido no encontrado con id: " + id));

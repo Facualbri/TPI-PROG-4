@@ -1,31 +1,31 @@
 const MisPronosticosPage = {
-  async render(main) {
-    main.innerHTML = `
+  async render(app) {
+    Navbar.render();
+    const content = document.getElementById('page-content');
+
+    content.innerHTML = `
       <div class="page-header">
         <div>
           <h1>Mis Pronósticos</h1>
           <p>Todos tus pronósticos registrados</p>
         </div>
       </div>
-
       <div class="tabs">
         <button class="tab active" data-filter="all">Todos</button>
         <button class="tab" data-filter="POR_JUGARSE">Por jugarse</button>
         <button class="tab" data-filter="EN_JUEGO">En juego</button>
         <button class="tab" data-filter="FINALIZADO">Finalizados</button>
       </div>
-
       <div id="pronosticos-list">
         <div class="loading-container"><div class="spinner spinner-lg"></div></div>
       </div>
     `;
 
-    main.querySelectorAll('.tab').forEach(tab => {
+    content.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', async () => {
-        main.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        content.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        const filter = tab.dataset.filter;
-        await MisPronosticosPage._loadPronosticos(filter);
+        await MisPronosticosPage._loadPronosticos(tab.dataset.filter);
       });
     });
 
@@ -45,7 +45,7 @@ const MisPronosticosPage = {
       }
 
       if (pronosticos.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>No hay pronósticos para mostrar</p></div>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-title">Sin pronósticos</div><p>No hay pronósticos para mostrar con este filtro.</p></div>';
         return;
       }
 
@@ -53,7 +53,10 @@ const MisPronosticosPage = {
         <div class="match-card mb-md" style="animation-delay:${i * 50}ms">
           <div class="match-card-header">
             <span class="badge ${Helpers.estadoClass(p.estadoPartido)}">${Helpers.estadoLabel(p.estadoPartido)}</span>
-            <span class="text-muted" style="font-size:0.8rem">${Helpers.formatDateShort(p.inicioUtc)}</span>
+            <div class="flex items-center gap-sm">
+              <span class="text-muted" style="font-size:0.78rem">${Helpers.formatDateShort(p.inicioUtc)}</span>
+              ${p.puntos > 0 ? `<span class="badge badge-success">+${p.puntos} pts</span>` : ''}
+            </div>
           </div>
           <div class="match-card-body">
             <div class="match-team">
@@ -65,9 +68,13 @@ const MisPronosticosPage = {
             </div>
             <div>
               <div class="match-score">${p.golesLocalPred} - ${p.golesVisitantePred}</div>
-              ${p.puntos > 0 ? `<div class="text-success font-bold" style="font-size:0.9rem;text-align:center">+${p.puntos} pts</div>` : ''}
-              ${p.estadoPartido === 'FINALIZADO' && p.golesLocal != null ? `
-                <div class="text-muted text-center" style="font-size:0.8rem">Resultado: ${p.golesLocal} - ${p.golesVisitante}</div>
+              ${p.estadoPartido === 'FINALIZADO' || p.estadoPartido === 'FINALIZADA' ? `
+                <div class="text-center mt-xs">
+                  ${p.puntos > 0
+                    ? `<span class="badge badge-success">✅ Acertado</span>`
+                    : `<span class="badge badge-danger">❌ No acertado</span>`
+                  }
+                </div>
               ` : ''}
             </div>
             <div class="match-team match-team-right">
@@ -78,10 +85,14 @@ const MisPronosticosPage = {
               }
             </div>
           </div>
+          ${(p.estadoPartido === 'FINALIZADO' || p.estadoPartido === 'FINALIZADA') && p.golesLocal != null ? `
+          <div style="text-align:center;padding-top:var(--space-sm);border-top:1px solid var(--color-border)">
+            <span class="text-muted" style="font-size:0.85rem">Resultado real: <strong>${p.golesLocal} - ${p.golesVisitante}</strong></span>
+          </div>` : ''}
         </div>
       `).join('');
     } catch (err) {
-      container.innerHTML = `<div class="alert alert-error">${Helpers.escapeHtml(err.message)}</div>`;
+      container.innerHTML = `<div class="alert alert-error">${Helpers.escapeHtml(Helpers.getErrorMsg(err))}</div>`;
     }
   },
 };

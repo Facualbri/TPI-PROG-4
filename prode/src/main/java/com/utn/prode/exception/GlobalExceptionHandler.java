@@ -1,10 +1,13 @@
 package com.utn.prode.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
 import java.util.*;
@@ -58,6 +61,32 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return buildError(HttpStatus.FORBIDDEN, "No tenés permisos para realizar esta acción");
+    }
+
+    // -------------------------------------------------------
+    // Tipo de argumento inválido (400) — ej: UUID mal formado
+    // -------------------------------------------------------
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String msg = String.format("El valor '%s' no es válido para '%s'", ex.getValue(), ex.getName());
+        return buildError(HttpStatus.BAD_REQUEST, msg);
+    }
+
+    // -------------------------------------------------------
+    // Parámetro obligatorio faltante (400)
+    // -------------------------------------------------------
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingParam(MissingServletRequestParameterException ex) {
+        String msg = "El parámetro '" + ex.getParameterName() + "' es obligatorio";
+        return buildError(HttpStatus.BAD_REQUEST, msg);
+    }
+
+    // -------------------------------------------------------
+    // Violación de integridad de datos (409 Conflict)
+    // -------------------------------------------------------
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return buildError(HttpStatus.CONFLICT, "El dato que intentás usar ya está registrado");
     }
 
     // -------------------------------------------------------

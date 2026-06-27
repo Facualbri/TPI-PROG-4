@@ -19,8 +19,10 @@ public class RankingController {
     // GET /api/ranking/global
     // RF7.1: ranking global ordenado por puntos con desempates (RF7.2)
     @GetMapping("/global")
-    public ResponseEntity<List<RankingResponseDTO>> rankingGlobal() {
-        return ResponseEntity.ok(rankingService.rankingGlobal());
+    public ResponseEntity<List<RankingResponseDTO>> rankingGlobal(
+            @RequestParam(required = false, defaultValue = "999") Integer limite) {
+        return ResponseEntity.ok(
+                rankingService.rankingGlobal().stream().limit(limite).toList());
     }
 
     // GET /api/ranking/pozo
